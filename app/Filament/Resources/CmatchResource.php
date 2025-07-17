@@ -16,7 +16,12 @@ use Filament\Tables\Actions\DeleteAction;
 
 class CmatchResource extends Resource
 {
+
     protected static ?string $model = Cmatch::class;
+    protected static ?string $pluralModelLabel = 'Eşleştirme';
+    protected static ?string $modelLabel = 'Eşleme';
+    protected static ?string $navigationIcon = 'heroicon-arrows-right-left';
+
 
     public static function form(Form $form): Form
     {
