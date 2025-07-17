@@ -14,7 +14,7 @@ use Filament\Tables\Columns\SelectColumn;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static ?string $navigationLabel = 'Kullanıcı İzinleri'; 
+    protected static ?string $navigationLabel = 'Kullanıcılar'; 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
