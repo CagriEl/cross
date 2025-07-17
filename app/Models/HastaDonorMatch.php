@@ -1,32 +1,22 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class HastaDonorMatch extends Model
+class HastaDonor extends Model
 {
-    use HasFactory;
+    // ...
 
-    protected $fillable = ['hasta_id', 'donor_id'];
-
-    // 🟢 Hastayı Getir
-    public function hasta()
+    // Filament tarafında Select::make('hasta_id')->relationship('hasta', 'ad') diyorsanız
+    public function hasta(): BelongsTo
     {
         return $this->belongsTo(Hasta::class);
     }
 
-    // 🟢 Donörü Getir
-    public function donor()
+    // Filament tarafında Select::make('donor_id')->relationship('donor', 'name') diyorsanız
+    public function donor(): BelongsTo
     {
         return $this->belongsTo(Donor::class);
-    }
-
-    // 🟢 Donörün kalan gün sayısını hesapla
-    public function getKalanGunAttribute()
-    {
-        return $this->donor ? Carbon::parse($this->donor->son_kullanma_tarihi)->diffInDays(now()) : '-';
     }
 }

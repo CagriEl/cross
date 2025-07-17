@@ -21,4 +21,13 @@ class Donor extends Model
     {
         return Carbon::parse($this->son_kullanma_tarihi)->diffInDays(now());
     }
+    public function hasta(): BelongsTo
+    {
+        return $this->belongsTo(Hasta::class);
+    }
+
+    public function donor(): BelongsTo
+    {
+        return $this->belongsTo(Donor::class);
+    }
 }

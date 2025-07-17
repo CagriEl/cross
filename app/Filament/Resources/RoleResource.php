@@ -15,7 +15,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = KullaniciIzinleri::class;
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-    protected static ?string $navigationLabel = 'Kullanıcı İzinleri'; 
+    protected static ?string $navigationLabel = 'Kullanıcı İzinleri';  
 
 
     public static function form(Form $form): Form
