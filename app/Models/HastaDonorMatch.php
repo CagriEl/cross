@@ -29,4 +29,9 @@ public function donor(): BelongsTo
     {
         return $this->donor ? Carbon::parse($this->donor->son_kullanma_tarihi)->diffInDays(now()) : '-';
     }
+
+     public function cmatch()
+    {
+        return $this->belongsTo(\App\Models\Cmatch::class, 'cmatch_id');
+    }
 }

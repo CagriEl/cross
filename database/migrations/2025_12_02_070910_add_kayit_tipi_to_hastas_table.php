@@ -6,23 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('hastas', function (Blueprint $table) {
-            if (! Schema::hasColumn('hastas', 'kayit_tipi')) {
-                $table->string('kayit_tipi')
-                    ->default('hasta')   // istersen default verebilirsin
-                    ->after('aciliyet_derecesi');
-            }
+            //
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('hastas', function (Blueprint $table) {
-            if (Schema::hasColumn('hastas', 'kayit_tipi')) {
-                $table->dropColumn('kayit_tipi');
-            }
+            //
         });
     }
 };

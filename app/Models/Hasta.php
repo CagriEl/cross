@@ -4,24 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Hastane;
 
 class Hasta extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ad', 'soyad', 'kan_grubu', 'hastane_id', 'aciliyet_derecesi'];
+    // Eğer tablo ismin özel değilse bunu yazmana gerek yok,
+    // ama tablo adın 'hastas' dışında bir şeyse burada belirtmelisin:
+    // protected $table = 'hastalar';
 
-    // 🟢 Hastanın kan grubuna göre uygun donörler
-    public function uygunDonorler()
-    {
-        return $this->hasMany(Donor::class, 'kan_grubu', 'kan_grubu')
-                    ->whereDate('son_kullanma_tarihi', '>=', now());
-    }
+    protected $fillable = [
+        'ad',
+        'soyad',
+        'kan_grubu',
+        'aciliyet_derecesi',
+        'kayit_tipi',   // 🔴 BUNUN MUTLAKA OLMASI LAZIM
+        'hastane_id',
+    ];
 
-    // 🟢 HASTANE ilişkisi (bunu EKLE)
     public function hastane()
     {
-        return $this->belongsTo(Hastane::class, 'hastane_id');
+        return $this->belongsTo(Hastane::class);
     }
 }

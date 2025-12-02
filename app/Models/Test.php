@@ -8,17 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Test extends Model
 {
     use HasFactory;
+
     protected $table = 'testler';
 
-    protected $fillable = ['test_adi', 'cihaz_adi'];
+    protected $fillable = [
+        'test_adi',
+    ];
 
-    public function sonuclar()
+    public function karts()
     {
-        return $this->hasMany(Sonuc::class);
-    }
-
-    public function cihaz()
-    {
-        return $this->belongsTo(Cihaz::class, 'cihaz_id');
+        return $this->hasMany(Kart::class);
     }
 }

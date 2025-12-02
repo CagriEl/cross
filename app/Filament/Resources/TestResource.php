@@ -2,25 +2,26 @@
 
 namespace App\Filament\Resources;
 
-use App\Models\Test;
-
 use App\Filament\Resources\TestResource\Pages;
-use App\Filament\Resources\TestResource\RelationManagers;
+use App\Models\Test;
 use Filament\Forms;
-use Filament\Tables;
-use Filament\Resources\Resource;
 use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 
 class TestResource extends Resource
 {
     protected static ?string $model = Test::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-beaker';
+
+    protected static ?string $navigationLabel = 'Testler';
+
     protected static ?string $pluralModelLabel = 'Testler';
+
     protected static ?string $modelLabel = 'Test';
-    protected static ?string $navigationIcon = 'heroicon-o-h3';
-
-
 
     public static function form(Form $form): Form
     {
@@ -28,13 +29,8 @@ class TestResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('test_adi')
                     ->label('Test Adı')
-                    ->required(),
-
-                    Forms\Components\Select::make('cihaz_id')
-                    ->label('Cihaz')
-                    ->relationship('cihaz', 'cihaz_adi') // Test modelindeki cihaz ilişkisinden verileri çeker
                     ->required()
-                    ->preload(),
+                    ->maxLength(255),
             ]);
     }
 
@@ -42,9 +38,18 @@ class TestResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('test_adi')->label('Test Adı')->sortable()->searchable(),
-                TextColumn::make('cihaz.cihaz_adi')->label('Cihaz')->sortable()->searchable(),
-                TextColumn::make('created_at')->label('Oluşturulma Tarihi')->date(),
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
+
+                TextColumn::make('test_adi')
+                    ->label('Test Adı')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('created_at')
+                    ->label('Oluşturulma Tarihi')
+                    ->dateTime('d.m.Y H:i'),
             ]);
     }
 
@@ -56,9 +61,9 @@ class TestResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTests::route('/'),
+            'index'  => Pages\ListTests::route('/'),
             'create' => Pages\CreateTest::route('/create'),
-            'edit' => Pages\EditTest::route('/{record}/edit'),
+            'edit'   => Pages\EditTest::route('/{record}/edit'),
         ];
     }
 }

@@ -17,4 +17,8 @@ class Cmatch extends Model
     protected $casts = [
         'matched_records' => 'array',
     ];
+   public function matches()
+{
+    return $this->hasMany(\App\Models\HastaDonorMatch::class, 'cmatch_id');
+}
 }

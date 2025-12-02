@@ -29,15 +29,27 @@
                 @forelse($matched as $item)
                     @php
                         $expiration = \Carbon\Carbon::parse($item['expiration_date']);
+
+                        // Bugünden SKT'ye kalan gün
                         $remainingDays = now()->startOfDay()->lt($expiration->startOfDay())
                             ? now()->startOfDay()->diffInDays($expiration->startOfDay())
                             : 0;
+
+                        // Kalan gün 0 ise bu kan KESİNLİKLE kullanılamaz
+                        $isExpired = $remainingDays <= 0;
+
                         $usage = (int) ($usageAmounts[$item['blood_group']] ?? 1);
                         $invalidUsage = $usage < 1 || $usage > $item['stock_count'];
                     @endphp
                     <tr>
-                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['blood_group'] }}</td>
-                        <td class="px-4 py-2 whitespace-nowrap">{{ $item['stock_count'] }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            {{ $item['blood_group'] }}
+                        </td>
+
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            {{ $item['stock_count'] }}
+                        </td>
+
                         <td class="px-4 py-2 whitespace-nowrap">
                             <input
                                 x-data
@@ -47,22 +59,48 @@
                                 max="{{ $item['stock_count'] }}"
                                 wire:model.defer="usageAmounts.{{ $item['blood_group'] }}"
                                 class="border rounded w-20 p-1"
+                                @if($isExpired) disabled @endif
                             />
                             <div class="text-xs text-red-600 mt-1">
-                                {{ $invalidUsage ? 'Geçersiz adet!' : '' }}
+                                @if ($invalidUsage)
+                                    Geçersiz adet!
+                                @elseif($isExpired)
+                                    Süre geçti, bu kan kullanılamaz.
+                                @endif
                             </div>
                         </td>
+
                         <td class="px-4 py-2 whitespace-nowrap">
                             <x-filament::button
                                 size="sm"
                                 wire:click="useBlood('{{ $item['blood_group'] }}')"
-                                disabled="{{ $invalidUsage ? 'disabled' : '' }}"
+                                :disabled="$invalidUsage || $isExpired"
                             >
-                                Kullan
+                                @if($isExpired)
+                                    Süre Geçti (Kullanılamaz)
+                                @else
+                                    Kullan
+                                @endif
                             </x-filament::button>
                         </td>
-                        <td class="px-4 py-2 whitespace-nowrap">{{ $expiration->format('d M Y') }}</td>
-                        <td class="px-4 py-2 whitespace-nowrap">{{ $remainingDays }}</td>
+
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            {{ $expiration->format('d M Y') }}
+                            @if($isExpired)
+                                <div class="text-xs text-red-600">
+                                    SKT geçmiş — imhaya gönderilmelidir.
+                                </div>
+                            @endif
+                        </td>
+
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            {{ $remainingDays }}
+                            @if($isExpired)
+                                <div class="text-xs text-red-600">
+                                    Süre doldu, kullanılamaz.
+                                </div>
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr>

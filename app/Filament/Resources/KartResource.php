@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Filament\Resources;
+use App\Filament\Resources\KartResource\RelationManagers\LissResultsRelationManager;
+
 
 use App\Filament\Resources\KartResource\Pages;
-use App\Filament\Resources\KartResource\RelationManagers;
 use App\Models\Kart;
 use Filament\Forms;
 use Filament\Tables;
@@ -24,15 +25,14 @@ class KartResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('kart_numarasi')
                     ->label('Kart Numarası')
-                    ->unique()
+                    ->unique(ignoreRecord: true)
                     ->required(),
 
-                Forms\Components\Select::make('tip')
-                    ->label('Kart Tipi')
-                    ->options([
-                        'Hasta' => 'Hasta',
-                        'Donör' => 'Donör',
-                    ])
+                Forms\Components\Select::make('test_id')
+                    ->label('Test')
+                    ->relationship('test', 'test_adi') // Kart modelindeki test() ilişkisi + testler.ad
+                    ->searchable()
+                    ->preload()
                     ->required(),
             ]);
     }
@@ -41,23 +41,35 @@ class KartResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('kart_numarasi')->label('Kart Numarası')->sortable()->searchable(),
-                TextColumn::make('tip')->label('Kart Tipi')->sortable(),
-                TextColumn::make('created_at')->label('Oluşturulma Tarihi')->date(),
+                TextColumn::make('kart_numarasi')
+                    ->label('Kart Numarası')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('test.test_adi')
+                    ->label('Test')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('created_at')
+                    ->label('Oluşturulma Tarihi')
+                    ->dateTime('d.m.Y H:i'),
             ]);
     }
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+        LissResultsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKarts::route('/'),
+            'index'  => Pages\ListKarts::route('/'),
             'create' => Pages\CreateKart::route('/create'),
-            'edit' => Pages\EditKart::route('/{record}/edit'),
+            'edit'   => Pages\EditKart::route('/{record}/edit'),
         ];
     }
 }

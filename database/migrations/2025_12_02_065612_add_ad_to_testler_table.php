@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('testler', function (Blueprint $table) {
-            if (! Schema::hasColumn('testler', 'ad')) {
-                $table->string('ad')->after('id');
+            // Eğer daha önce yoksa "ad" alanını ekliyoruz
+            if (! Schema::hasColumn('testler', 'test_adi')) {
+                $table->string('test_adi')->nullable()->after('id');
             }
         });
     }
