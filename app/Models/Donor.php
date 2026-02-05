@@ -10,24 +10,36 @@ class Donor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ad', 'soyad', 'kan_grubu', 'son_kullanma_tarihi', 'transfer_edildi'];
+    protected $fillable = [
+        'ad', 
+        'soyad', 
+        'kan_grubu', 
+        'son_kullanma_tarihi', 
+        'transfer_edildi'
+    ];
 
     protected $casts = [
         'transfer_edildi' => 'boolean',
+        'son_kullanma_tarihi' => 'date',
     ];
 
-    // 🟢 Donörün kalan gün sayısını hesaplayalım
     public function getKalanGunAttribute()
     {
-        return Carbon::parse($this->son_kullanma_tarihi)->diffInDays(now());
-    }
-    public function hasta(): BelongsTo
-    {
-        return $this->belongsTo(Hasta::class);
+        if (!$this->son_kullanma_tarihi) return 0;
+        return Carbon::parse($this->son_kullanma_tarihi)->diffInDays(now(), false);
     }
 
-    public function donor(): BelongsTo
+    // Donör ile eşleşen kayıtları görmek istersen:
+    public function matches()
     {
-        return $this->belongsTo(Donor::class);
+        return $this->hasMany(Cmatch::class, 'donor_id');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($donor) {
+            // Kayıt anında eşleşme servisini tetikle
+            (new \App\Services\MatchingService())->checkForDonor($donor);
+        });
     }
 }

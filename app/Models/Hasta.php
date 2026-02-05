@@ -9,21 +9,31 @@ class Hasta extends Model
 {
     use HasFactory;
 
-    // Eğer tablo ismin özel değilse bunu yazmana gerek yok,
-    // ama tablo adın 'hastas' dışında bir şeyse burada belirtmelisin:
-    // protected $table = 'hastalar';
-
     protected $fillable = [
         'ad',
         'soyad',
         'kan_grubu',
         'aciliyet_derecesi',
-        'kayit_tipi',   // 🔴 BUNUN MUTLAKA OLMASI LAZIM
+        'kayit_tipi',
         'hastane_id',
     ];
 
     public function hastane()
     {
         return $this->belongsTo(Hastane::class);
+    }
+
+    // Hasta ile eşleşen kayıtları görmek istersen:
+    public function matches()
+    {
+        return $this->hasMany(Cmatch::class, 'hasta_id');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($hasta) {
+            // Kayıt anında eşleşme servisini tetikle
+            (new \App\Services\MatchingService())->checkForHasta($hasta);
+        });
     }
 }
